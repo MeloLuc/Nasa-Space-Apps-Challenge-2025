@@ -1,7 +1,7 @@
 <div align="center">
   <h1>Nasa Space Apps Challenge 2025</h1>
   <h2>Will It Rain On My Parade?</h2>
-  <p>Uma aplicação web que utiliza décadas de dados da NASA para prever a <strong>probabilidade</strong> de condições climáticas para planejamento de eventos a longo prazo.</p>
+  <p>A web application that uses decades of NASA data to predict the probability of weather conditions for long-term event planning.</p>
 
   ![Python](https://img.shields.io/badge/python-3.11-blue.svg)
   ![Flask](https://img.shields.io/badge/flask-3.0-important)
