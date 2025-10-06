@@ -45,7 +45,7 @@ Use the date selector to select the day for which you want the analysis. The yea
 
 <div align="center">
 
-*(img/img01.jpeg)*
+<img src="img/img01.jpeg" width="600"/>
 
 </div>
 
@@ -54,13 +54,13 @@ The app instantly displays historical probabilities for the selected day, showin
 
 <div align="center">
 
-*(img/img02.jpeg)*
+<img src="img/img02.jpeg" width="600"/>
 
 </div>
 
 <div align="center">
 
-*(img/img03.jpeg)*
+<img src="img/img03.jpeg" width="200"/>
 
 </div>
 
@@ -117,9 +117,10 @@ npm install
 # Launch the application
 npm start
 
-- **[Cauã Cavalcante Gonçalves]** - [LinkedIn](https://www.linkedin.com/in/cauã-gonçalves) / [GitHub](https://github.com/cgonssalves)
-- **[Ivo Henrique Lima dos santos]** - [LinkedIn]() / [GitHub](https://github.com/IvoLimaS)
-- **[Lucas de Melo Monteiro Peixoto]** - [LinkedIn](https://www.linkedin.com/in/lucas-de-melo-monteiro-peixoto-34b78926b) / [GitHub](https://github.com/MeloLuc)
-- **[Paulo Ricardo Oliveira Santos]** - [LinkedIn](https://www.linkedin.com/in/paulo-ricardo-9439a9263) / [GitHub](https://github.com/PauloRicardo-05)
-- **[Rafael Rocha dos Santos]** - [LinkedIn](https://www.linkedin.com/in/rafael-rocha-dos-santos-7b133410b) / [GitHub](https://github.com/Santosfael)
-- **[Thiago Araujo Silva]** - [LinkedIn](https://www.linkedin.com/in/thiago-silva-509293366) / [GitHub](https://github.com/Thiag0txt)
+# XBigDevs
+- Cauã Cavalcante Gonçalves
+- Ivo Henrique Lima dos Santos
+- Lucas de Melo Monteiro Peixoto  
+- Paulo Ricardo Oliveira Santos 
+- Rafael Rocha dos Santos
+- Thiago Araujo Silva  
