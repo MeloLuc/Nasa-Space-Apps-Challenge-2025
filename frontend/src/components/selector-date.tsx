@@ -1,0 +1,266 @@
+import { CalendarDays, Calendar as CalendarIcon, ChevronDownIcon } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
+import { RadioGroup } from "@radix-ui/react-radio-group";
+import { RadioGroupItem } from "./ui/radio-group";
+import { useState } from "react";
+import { Label } from "./ui/label";
+import { Popover } from "./ui/popover";
+import { PopoverContent, PopoverTrigger } from "@radix-ui/react-popover";
+import { Button } from "./ui/button";
+import { Calendar } from "./ui/calendar";
+import { Checkbox } from "./ui/checkbox";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
+import { format } from "date-fns";
+import type { DateRange } from "@/data/mock-weather-data";
+
+interface DateSelectorProps {
+    onDateSelect: (dateRange: DateRange) => void
+    selectedDateRange: DateRange | null
+}
+
+export function SelectorDate({ onDateSelect, selectedDateRange }: DateSelectorProps) {
+    const [dataSelectedType, setDataSelectedType] = useState<"single" | "range">("single")
+    const [open, setOpen] = useState(false)
+    const [openEndData, setOpenEndData] = useState(false)
+    const [date, setDate] = useState<Date | undefined>(undefined)
+    const [startDate, setStartDate] = useState<Date | undefined>(undefined)
+    const [endDate, setEndDate] = useState<Date | undefined>(undefined)
+    const [selectedHour, setSelectedHour] = useState<number | undefined>(undefined)
+    const [includeHour, setIncludeHour] = useState(false)
+
+    function handleApply() {
+        if (dataSelectedType === 'single' && date) {
+            onDateSelect({ 
+                startDate: format(date, "yyyy-MM-dd"),
+                endDate: format(date, "yyyy-MM-dd"),
+                hour: includeHour ? selectedHour : undefined
+            })
+            console.log(selectedHour)
+        } else if (dataSelectedType === 'range' && startDate && endDate) {
+            onDateSelect({
+                startDate: startDate.toDateString(),
+                endDate: endDate.toDateString(),
+                hour: includeHour ? selectedHour : undefined
+            })
+        }
+    }
+
+    function getQuickDateRange(type: string) {
+        const today = new Date()
+        const formatDate = (date: Date) => date.toISOString().split('T')[0]
+
+        switch (type) {
+            case 'today':
+                return { startDate: formatDate(today), endDate: formatDate(today) }
+            case 'week':
+                // eslint-disable-next-line no-case-declarations
+                const weekEnd = new Date(today)
+                weekEnd.setDate(today.getDate() + 7)
+                return { startDate: formatDate(today), endDate: formatDate(weekEnd) }
+            case 'month':
+                // eslint-disable-next-line no-case-declarations
+                const monthEnd = new Date(today)
+                monthEnd.setMonth(today.getMonth() + 1)
+                return { startDate: formatDate(today), endDate: formatDate(monthEnd) }
+            case 'season':
+                // eslint-disable-next-line no-case-declarations
+                const seasonEnd = new Date(today)
+                seasonEnd.setMonth(today.getMonth() + 3)
+                return { startDate: formatDate(today), endDate: formatDate(seasonEnd) }
+            default:
+                return null
+        }
+    }
+
+    function handleQuickSelect(type: string) {
+        const range = getQuickDateRange(type);
+        if (range) {
+            onDateSelect(range);
+            setStartDate(new Date(range.startDate));
+            setEndDate(new Date(range.endDate));
+            if (range.startDate === range.endDate) {
+                setDate(new Date(range.startDate));
+                setDataSelectedType('single');
+            } else {
+                setDataSelectedType('range');
+            }
+        }
+    };
+
+    return (
+        <Card>
+            <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                    <CalendarIcon className="h-5 w-5" />
+                    Select a date
+                </CardTitle>
+            </CardHeader>
+
+            <CardContent className="space-y-4">
+                <RadioGroup value={dataSelectedType} onValueChange={(value: "single" | "range") => setDataSelectedType(value)}>
+                    <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="single" id="single" />
+                        <Label htmlFor="single">Select a date</Label>
+                    </div>
+                </RadioGroup>
+
+                {
+                    dataSelectedType === "single" ? (
+                        <div className="flex flex-col space-y-2">
+                            <Label htmlFor="single-date">Data</Label>
+                            <Popover open={open} onOpenChange={setOpen}>
+                                <PopoverTrigger asChild>
+                                    <Button
+                                        variant="outline"
+                                        data-empty={!date}
+                                        className="justify-between font-normal"
+                                    >
+                                        <CalendarIcon />
+                                        {date ? date.toLocaleDateString() : <span>Select the date</span>}
+                                        <ChevronDownIcon />
+                                    </Button>
+                                </PopoverTrigger>
+                                <PopoverContent className="w-auto overflow-hidden p-0 bg-gray-50 rounded-lg shadow-lg" align="start">
+                                    <Calendar
+                                        mode="single"
+                                        captionLayout="dropdown"
+                                        selected={date}
+                                        onSelect={(date) => {
+                                            setDate(date)
+                                            setOpen(false)
+                                        }} />
+                                </PopoverContent>
+                            </Popover>
+                        </div>
+                    ) : (
+                        <div className="grid grid-cols-2 gap-4">
+                            <div className="space-y-2">
+                                <Label htmlFor="start-date">Start date:</Label>
+                                <Popover open={open} onOpenChange={setOpen}>
+                                    <PopoverTrigger asChild>
+                                        <Button
+                                            variant="outline"
+                                            data-empty={!startDate}
+                                            className="justify-between font-normal"
+                                        >
+                                            <CalendarIcon />
+                                            {startDate ? startDate.toLocaleDateString() : <span>Selecione a data</span>}
+                                            <ChevronDownIcon />
+                                        </Button>
+                                    </PopoverTrigger>
+                                    <PopoverContent className="w-auto overflow-hidden p-0 bg-gray-50 rounded-lg shadow-lg" align="start">
+                                        <Calendar
+                                            mode="single"
+                                            captionLayout="dropdown"
+                                            selected={startDate}
+                                            onSelect={(date) => {
+                                                setStartDate(date)
+                                                setOpen(false)
+                                            }} />
+                                    </PopoverContent>
+                                </Popover>
+                            </div>
+
+                            <div className="space-y-2">
+                                <Label htmlFor="end-date">End date:</Label>
+                                <Popover open={openEndData} onOpenChange={setOpenEndData}>
+                                    <PopoverTrigger asChild>
+                                        <Button
+                                            variant="outline"
+                                            data-empty={!endDate}
+                                            className="justify-between font-normal"
+                                        >
+                                            <CalendarIcon />
+                                            {endDate ? endDate.toLocaleDateString() : <span>Select the date</span>}
+                                            <ChevronDownIcon />
+                                        </Button>
+                                    </PopoverTrigger>
+                                    <PopoverContent className="w-auto overflow-hidden p-0 bg-gray-50 rounded-lg shadow-lg" align="start">
+                                        <Calendar
+                                            mode="single"
+                                            captionLayout="dropdown"
+                                            selected={endDate}
+                                            disabled={(date) => startDate ? date < startDate : false}
+                                            onSelect={(date) => {
+                                                setEndDate(date)
+                                                setOpenEndData(false)
+                                            }} />
+                                    </PopoverContent>
+                                </Popover>
+                            </div>
+                        </div>
+                    )
+                }
+                {/* Seleção de hora */}
+                <div className="border-t pt-4 space-y-3">
+                    <div className="flex items-center space-x-2">
+                        <Checkbox
+                            id="include-hour"
+                            checked={includeHour}
+                            onCheckedChange={(checked) => setIncludeHour(checked as boolean)}
+                        />
+                        <Label htmlFor="include-hour">Include specific time</Label>
+                    </div>
+
+                    {includeHour && (
+                        <div className="space-y-2">
+                            <Label htmlFor="hour-select">Hour (0-23)</Label>
+                            <Select value={selectedHour?.toString()} onValueChange={(value) => setSelectedHour(parseInt(value))}>
+                                <SelectTrigger>
+                                    <SelectValue placeholder="Selecione a hora" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    {Array.from({ length: 24 }, (_, i) => (
+                                        <SelectItem key={i} value={i.toString()}>
+                                            {i.toString().padStart(2, '0')}:00
+                                        </SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
+                        </div>
+                    )}
+                </div>
+                <Button
+                    onClick={handleApply}
+                    className="w-full"
+                    disabled={dataSelectedType === "single" ? !date : !startDate || !endDate}
+                >
+                    Apply Selection
+                </Button>
+
+                <div className="border-t pt-4">
+                    <p className="text-sm text-muted-foreground mb-2">Quick Selections:</p>
+                    <div className="grid grid-cols-2 gap-2">
+                        <Button variant="outline" size="sm" onClick={() => handleQuickSelect('today')}>
+                            Today
+                        </Button>
+                        <Button variant="outline" size="sm" onClick={() => handleQuickSelect('week')}>
+                            Next week
+                        </Button>
+                        <Button variant="outline" size="sm" onClick={() => handleQuickSelect('month')}>
+                            Next month
+                        </Button>
+                        <Button variant="outline" size="sm" onClick={() => handleQuickSelect('season')}>
+                            Next Station
+                        </Button>
+                    </div>
+                </div>
+
+                {selectedDateRange && (
+                    <div className="p-3 bg-muted rounded-lg">
+                        <p className="text-sm font-medium flex items-center gap-2">
+                            <CalendarDays className="h-4 w-4" />
+                            Selected period:
+                        </p>
+                        <p className="text-sm text-muted-foreground">
+                            {selectedDateRange.startDate === selectedDateRange.endDate
+                                ? `${new Date(selectedDateRange.startDate).toLocaleDateString('pt-BR')}`
+                                : `${new Date(selectedDateRange.startDate).toLocaleDateString('pt-BR')} até ${new Date(selectedDateRange.endDate).toLocaleDateString('pt-BR')}`
+                            }
+                        </p>
+                    </div>
+                )}
+            </CardContent>
+        </Card>
+    )
+}
